@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pesewa — Student Chop Money Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="brand">Pesewa</div>
+    <nav class="nav" id="nav" aria-label="Main navigation">
+      <a href="#dashboard" class="nav-link is-active" data-view="dashboard">Dashboard</a>
+      <a href="#add-expense" class="nav-link" data-view="add-expense">Add expense</a>
+      <a href="#budget" class="nav-link" data-view="budget">Budget</a>
+      <a href="#report" class="nav-link" data-view="report">Report</a>
+    </nav>
+    <div class="sidebar-foot" id="current-month"></div>
+  </aside>
+
+  <main class="content">
+
+    <!-- Dashboard -->
+    <section id="view-dashboard" class="view is-active">
+      <h1 class="view-title" id="dashboard-month-title">This month</h1>
+      <p class="view-subtitle">This month's chop money, at a glance.</p>
+
+      <div class="stat-row">
+        <div class="stat">
+          <div class="stat-label">Monthly allowance</div>
+          <div class="stat-value" id="stat-allowance">GH¢0.00</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Spent so far</div>
+          <div class="stat-value" id="stat-spent">GH¢0.00</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Remaining</div>
+          <div class="stat-value stat-value--accent" id="stat-remaining">GH¢0.00</div>
+        </div>
+      </div>
+
+      <h2 class="section-title">Budgets</h2>
+      <div id="budget-bars"></div>
+
+      <div class="hr"></div>
+
+      <h2 class="section-title">This month's ledger</h2>
+      <div id="ledger-rows" class="ledger"></div>
+      <p id="ledger-empty" class="muted" hidden>Nothing logged yet. Add your first expense.</p>
+
+    </section>
+
+    <!-- Add expense -->
+    <section id="view-add-expense" class="view">
+      <h1 class="view-title">Add an expense</h1>
+      <p class="view-subtitle" id="add-expense-subtitle">This will be logged under this month.</p>
+
+      <form id="expense-form" class="form" novalidate>
+        <div class="field">
+          <label for="amount">Amount (GH¢)</label>
+          <input id="amount" name="amount" type="number" min="0.01" step="0.01" placeholder="0.00" required>
+        </div>
+
+        <div class="field">
+          <label for="category">Category</label>
+          <select id="category" name="category" required>
+            <option value="food">Food</option>
+            <option value="snacks">Snacks</option>
+            <option value="essentials">Essentials &amp; supplies</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="description">Description</label>
+          <input id="description" name="description" type="text" placeholder="Jollof, Night Market" required>
+        </div>
+
+        <div class="field">
+          <label for="date">Date</label>
+          <input id="date" name="date" type="date" required>
+        </div>
+
+        <button type="submit" class="btn btn--primary">Add expense</button>
+        <p id="expense-feedback" class="feedback" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <!-- Budget -->
+    <section id="view-budget" class="view">
+      <h1 class="view-title">Set your month</h1>
+      <p class="view-subtitle" id="budget-subtitle">Your allowance and category targets for this month.</p>
+
+      <form id="budget-form" class="form form--narrow" novalidate>
+        <div class="field">
+          <label for="allowance-input">Monthly chop money</label>
+          <input id="allowance-input" name="allowance" type="number" min="0" step="0.01" required>
+        </div>
+
+        <div class="field-group">
+          <div class="field-group-label">Category targets</div>
+
+          <div class="target-row">
+            <label for="target-food">Food</label>
+            <input id="target-food" name="target-food" type="number" min="0" step="0.01">
+          </div>
+          <div class="target-row">
+            <label for="target-snacks">Snacks</label>
+            <input id="target-snacks" name="target-snacks" type="number" min="0" step="0.01">
+          </div>
+          <div class="target-row">
+            <label for="target-essentials">Essentials &amp; supplies</label>
+            <input id="target-essentials" name="target-essentials" type="number" min="0" step="0.01">
+          </div>
+          <div class="target-row">
+            <label for="target-other">Other</label>
+            <input id="target-other" name="target-other" type="number" min="0" step="0.01">
+          </div>
+        </div>
+
+        <div class="allocated-row">
+          <span>Allocated</span>
+          <span id="allocated-value">GH¢0.00 of GH¢0.00</span>
+        </div>
+
+        <button type="submit" class="btn btn--primary">Save budget</button>
+        <p id="budget-feedback" class="feedback" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <!-- Report -->
+    <section id="view-report" class="view">
+      <h1 class="view-title">Report</h1>
+      <p class="view-subtitle">Recalculate to have the server check these totals on its own.</p>
+
+      <div class="report-total" id="report-total">GH¢0.00</div>
+      <div class="report-total-sub" id="report-total-sub">spent of GH¢0.00</div>
+
+      <div id="report-badge"></div>
+
+      <button type="button" id="recalculate-btn" class="btn btn--secondary">Recalculate on server</button>
+      <p id="report-status" class="feedback" role="status" aria-live="polite"></p>
+
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th class="num">Spent</th>
+            <th class="num">Target</th>
+            <th class="num">Status</th>
+          </tr>
+        </thead>
+        <tbody id="report-body"></tbody>
+      </table>
+    </section>
+
+  </main>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
